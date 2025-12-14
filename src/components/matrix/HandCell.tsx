@@ -9,38 +9,74 @@ interface HandCellProps {
 }
 
 export const HandCell: React.FC<HandCellProps> = ({ hand, strategy, onSelect, isSelected }) => {
-    // Compute style based on strategy
-    const customStyle = React.useMemo(() => {
-        if (!strategy) return {};
+    // Compute background based on strategy
+    const bgStyle = React.useMemo(() => {
+        if (!strategy) return { backgroundColor: '#1e293b' }; // slate-800
+
         const raiseFreq = strategy.actions.find(a => a.action === 'Raise')?.frequency || 0;
         const callFreq = strategy.actions.find(a => a.action === 'Call')?.frequency || 0;
         const foldFreq = strategy.actions.find(a => a.action === 'Fold')?.frequency || 0;
 
-        // Simple Green -> Blue -> Red stacking
-        // background: linear-gradient(to right, green 0% X%, blue X% Y%, red Y% 100%)
+        // Pure fold = dark
+        if (foldFreq > 0.99) return { backgroundColor: '#334155' }; // slate-700
+
+        // Pure raise = green
+        if (raiseFreq > 0.99) return { backgroundColor: '#22c55e' };
+
+        // Pure call = blue
+        if (callFreq > 0.99) return { backgroundColor: '#3b82f6' };
+
+        // Mixed strategy - gradient
         const raisePct = raiseFreq * 100;
         const callPct = callFreq * 100;
 
-        // If mostly fold, keep it dark/neutral
-        if (foldFreq > 0.99) return { backgroundColor: '#374151' }; // gray-700
-
         return {
-            background: `linear-gradient(to right, 
-        #22c55e 0% ${raisePct}%, 
-        #3b82f6 ${raisePct}% ${raisePct + callPct}%, 
-        #ef4444 ${raisePct + callPct}% 100%)`
+            background: `linear-gradient(135deg,
+                #22c55e 0%,
+                #22c55e ${raisePct}%,
+                #3b82f6 ${raisePct}%,
+                #3b82f6 ${raisePct + callPct}%,
+                #ef4444 ${raisePct + callPct}%,
+                #ef4444 100%)`
         };
     }, [strategy]);
+
+    const hasFold = strategy?.actions.find(a => a.action === 'Fold')?.frequency || 0;
+    const textColor = hasFold > 0.99 ? '#94a3b8' : '#ffffff';
 
     return (
         <div
             onClick={() => onSelect(hand)}
-            style={customStyle}
-            className={`
-        w-full aspect-square flex items-center justify-center text-[10px] sm:text-xs font-bold cursor-pointer select-none border border-gray-900/10 dark:border-gray-100/10
-        ${!strategy ? 'bg-white dark:bg-gray-800 text-gray-400' : 'text-white'}
-        ${isSelected ? 'ring-2 ring-yellow-400 z-10' : ''}
-      `}
+            style={{
+                ...bgStyle,
+                aspectRatio: '1 / 1',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 'clamp(8px, 2vw, 11px)',
+                fontWeight: 700,
+                color: textColor,
+                cursor: 'pointer',
+                userSelect: 'none',
+                borderRadius: 3,
+                transition: 'transform 0.1s, box-shadow 0.1s',
+                boxShadow: isSelected ? '0 0 0 2px #facc15, 0 0 12px rgba(250, 204, 21, 0.5)' : 'none',
+                transform: isSelected ? 'scale(1.1)' : 'scale(1)',
+                zIndex: isSelected ? 10 : 1,
+                position: 'relative',
+            }}
+            onMouseEnter={(e) => {
+                if (!isSelected) {
+                    e.currentTarget.style.transform = 'scale(1.05)';
+                    e.currentTarget.style.zIndex = '5';
+                }
+            }}
+            onMouseLeave={(e) => {
+                if (!isSelected) {
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.zIndex = '1';
+                }
+            }}
         >
             {hand}
         </div>

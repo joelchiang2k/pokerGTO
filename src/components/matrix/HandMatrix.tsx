@@ -11,7 +11,16 @@ interface HandMatrixProps {
 
 export const HandMatrix: React.FC<HandMatrixProps> = ({ rangeData, selectedHand, onHandSelect }) => {
     return (
-        <div className="grid grid-cols-13 gap-0.5 bg-gray-200 dark:bg-gray-900 p-1 rounded-lg border border-gray-300 dark:border-gray-700 max-w-lg mx-auto shadow-xl">
+        <div
+            className="bg-slate-900/80 p-1.5 rounded-xl border border-slate-700/50 shadow-2xl"
+            style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(13, 1fr)',
+                gap: 2,
+                width: 'min(100%, 520px)',
+                aspectRatio: '1 / 1',
+            }}
+        >
             {ALL_HANDS.map(hand => {
                 const strategy = rangeData?.hands[hand] ? { hand, actions: rangeData.hands[hand] } : undefined;
                 return (

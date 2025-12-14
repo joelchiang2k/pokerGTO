@@ -8,27 +8,30 @@ interface ActionButtonsProps {
 
 export const ActionButtons: React.FC<ActionButtonsProps> = ({ onAction, disabled }) => {
     return (
-        <div className="flex gap-4 justify-center mt-6">
+        <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
             <button
                 onClick={() => onAction('Fold')}
                 disabled={disabled}
-                className="px-8 py-3 bg-red-500 hover:bg-red-600 active:bg-red-700 text-white font-bold rounded-lg shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed text-lg"
+                className="group relative px-8 sm:px-10 py-3 sm:py-4 bg-gradient-to-br from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 active:from-red-700 active:to-red-800 text-white font-bold rounded-xl shadow-lg shadow-red-900/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-base sm:text-lg border border-red-500/30 hover:scale-105 active:scale-95"
             >
-                Fold
+                <span className="relative z-10">Fold</span>
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
             </button>
             <button
                 onClick={() => onAction('Call')}
                 disabled={disabled}
-                className="px-8 py-3 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white font-bold rounded-lg shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed text-lg"
+                className="group relative px-8 sm:px-10 py-3 sm:py-4 bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 active:from-blue-700 active:to-blue-800 text-white font-bold rounded-xl shadow-lg shadow-blue-900/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-base sm:text-lg border border-blue-500/30 hover:scale-105 active:scale-95"
             >
-                Call
+                <span className="relative z-10">Call</span>
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
             </button>
             <button
                 onClick={() => onAction('Raise')}
                 disabled={disabled}
-                className="px-8 py-3 bg-green-500 hover:bg-green-600 active:bg-green-700 text-white font-bold rounded-lg shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed text-lg"
+                className="group relative px-8 sm:px-10 py-3 sm:py-4 bg-gradient-to-br from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 active:from-emerald-700 active:to-emerald-800 text-white font-bold rounded-xl shadow-lg shadow-emerald-900/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-base sm:text-lg border border-emerald-500/30 hover:scale-105 active:scale-95"
             >
-                Raise
+                <span className="relative z-10">Raise</span>
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
             </button>
         </div>
     );

@@ -1,4 +1,5 @@
-import type { ActionFrequency, RangeData, Position } from './types/poker';
+import type { RangeData, Position } from './types/poker';
+import { getGTORange } from './data/gtoRanges';
 
 const RANKS = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'];
 
@@ -20,31 +21,12 @@ export function generateAllHands(): string[] {
 
 export const ALL_HANDS = generateAllHands();
 
-// Mock Data Generator
+/**
+ * Get the GTO RFI range for a specific position
+ * Uses real solver-derived data for 6-max 100bb cash games
+ */
 export function generateMockRange(position: Position): RangeData {
-    const hands: Record<string, ActionFrequency[]> = {};
-
-    ALL_HANDS.forEach(hand => {
-        // Simple logic for mock data:
-        // Pairs & High Suited = Raise
-        // Low offsuit = Fold
-        // Middle = Mix
-        const isPair = !hand.includes('s') && !hand.includes('o');
-        const rank1Idx = RANKS.indexOf(hand[0]);
-
-        if (isPair && rank1Idx < 5) { // AA-99
-            hands[hand] = [{ action: 'Raise', frequency: 1.0 }];
-        } else if (hand.includes('s') && rank1Idx < 4) { // AKs-JTs
-            hands[hand] = [{ action: 'Raise', frequency: 1.0 }];
-        } else {
-            hands[hand] = [{ action: 'Fold', frequency: 1.0 }];
-        }
-    });
-
-    return {
-        position,
-        hands
-    };
+    return getGTORange(position);
 }
 
 // Helper to pick a random hand that has some action frequency (not 100% fold if we want to test playing hands, 
@@ -60,4 +42,40 @@ export function getRandomHandInRange(range: RangeData): string {
     if (playableHands.length === 0) return 'AA'; // Fallback
     const idx = Math.floor(Math.random() * playableHands.length);
     return playableHands[idx];
+}
+
+const SUITS = ['s', 'h', 'd', 'c']; // spades, hearts, diamonds, clubs
+
+function getRandomSuit(): string {
+    return SUITS[Math.floor(Math.random() * SUITS.length)];
+}
+
+function getRandomDifferentSuit(exclude: string): string {
+    const available = SUITS.filter(s => s !== exclude);
+    return available[Math.floor(Math.random() * available.length)];
+}
+
+export function getSpecificCards(handGroup: string): { rank1: string; suit1: string; rank2: string; suit2: string } {
+    const rank1 = handGroup[0];
+    const rank2 = handGroup[1];
+    const type = handGroup.length > 2 ? handGroup[2] : ''; // 's' or 'o' or empty (pair)
+
+    let suit1: string;
+    let suit2: string;
+
+    if (type === 's') {
+        // Suited: same random suit
+        suit1 = getRandomSuit();
+        suit2 = suit1;
+    } else if (type === 'o') {
+        // Offsuit: different random suits
+        suit1 = getRandomSuit();
+        suit2 = getRandomDifferentSuit(suit1);
+    } else {
+        // Pocket Pair: different random suits
+        suit1 = getRandomSuit();
+        suit2 = getRandomDifferentSuit(suit1);
+    }
+
+    return { rank1, suit1, rank2, suit2 };
 }
