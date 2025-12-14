@@ -28,11 +28,11 @@ const suitColors: Record<Suit, string> = {
     s: '#1f2937'  // dark gray
 };
 
-const sizeStyles: Record<string, { width: number; height: number; fontSize: number; centerSize: number }> = {
-    sm: { width: 40, height: 56, fontSize: 12, centerSize: 18 },
-    md: { width: 64, height: 96, fontSize: 16, centerSize: 28 },
-    lg: { width: 96, height: 144, fontSize: 22, centerSize: 40 },
-    xl: { width: 112, height: 160, fontSize: 28, centerSize: 52 }
+const sizeStyles: Record<string, { width: number; height: number; fontSize: number; centerSize: number; padding: number; borderRadius: number }> = {
+    sm: { width: 52, height: 72, fontSize: 11, centerSize: 18, padding: 4, borderRadius: 8 },
+    md: { width: 70, height: 98, fontSize: 14, centerSize: 24, padding: 5, borderRadius: 10 },
+    lg: { width: 90, height: 126, fontSize: 18, centerSize: 32, padding: 6, borderRadius: 12 },
+    xl: { width: 110, height: 154, fontSize: 22, centerSize: 40, padding: 8, borderRadius: 14 }
 };
 
 export const PlayingCard: React.FC<PlayingCardProps> = ({
@@ -89,16 +89,17 @@ export const PlayingCard: React.FC<PlayingCardProps> = ({
                 minWidth: styles.width,
                 minHeight: styles.height,
                 background: 'linear-gradient(135deg, #ffffff 0%, #f9fafb 50%, #f3f4f6 100%)',
-                borderRadius: 12,
-                boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
-                border: '2px solid #e5e7eb',
+                borderRadius: styles.borderRadius,
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                border: '1px solid #d1d5db',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                padding: 8,
+                padding: styles.padding,
                 cursor: 'pointer',
                 transformStyle: 'preserve-3d',
+                overflow: 'hidden',
             }}
         >
             {/* Top Left */}

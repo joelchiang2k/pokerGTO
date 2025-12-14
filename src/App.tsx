@@ -4,13 +4,14 @@ import { ResultModal } from './components/trainer/ResultModal';
 import { HandMatrix } from './components/matrix/HandMatrix';
 import { PositionSelector } from './components/controls/PositionSelector';
 import { PlayingCard, type Suit } from './components/ui/PlayingCard';
+import { PostflopTrainer } from './components/postflop/PostflopTrainer';
 import { generateMockRange, getRandomHandInRange, getSpecificCards } from './poker-utils';
 import type { Position, ActionType } from './types/poker';
 
 function App() {
   const [selectedPosition, setSelectedPosition] = useState<Position>('BTN');
   const [selectedHand, setSelectedHand] = useState<string | null>(null);
-  const [mode, setMode] = useState<'view' | 'trainer'>('trainer');
+  const [mode, setMode] = useState<'view' | 'trainer' | 'postflop'>('trainer');
 
   const currentRange = useMemo(() => {
     return generateMockRange(selectedPosition);
@@ -58,12 +59,12 @@ function App() {
             <div className="inline-flex items-center gap-2 mb-2">
               <span className="text-2xl">♠</span>
               <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
-                GTO Preflop Trainer
+                GTO Poker Trainer
               </h1>
               <span className="text-2xl text-red-500">♥</span>
             </div>
             <p className="text-slate-400 text-sm md:text-base">
-              Master optimal preflop strategy for 6-max cash games
+              Master optimal strategy for 6-max cash games
             </p>
           </div>
         </header>
@@ -73,20 +74,22 @@ function App() {
           <div className="max-w-4xl mx-auto">
             <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-4 shadow-xl">
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                {/* Position Selector */}
-                <div className="flex items-center gap-3">
-                  <span className="text-slate-400 text-sm font-medium hidden sm:block">Position:</span>
-                  <PositionSelector
-                    selectedPosition={selectedPosition}
-                    onSelect={setSelectedPosition}
-                  />
-                </div>
+                {/* Position Selector - hide in postflop mode */}
+                {mode !== 'postflop' && (
+                  <div className="flex items-center gap-3">
+                    <span className="text-slate-400 text-sm font-medium hidden sm:block">Position:</span>
+                    <PositionSelector
+                      selectedPosition={selectedPosition}
+                      onSelect={setSelectedPosition}
+                    />
+                  </div>
+                )}
 
                 {/* Mode Toggle */}
-                <div className="flex bg-slate-900/50 p-1 rounded-xl border border-slate-700/50">
+                <div className={`flex bg-slate-900/50 p-1 rounded-xl border border-slate-700/50 ${mode === 'postflop' ? 'mx-auto' : ''}`}>
                   <button
                     onClick={() => setMode('view')}
-                    className={`px-5 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                    className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
                       mode === 'view'
                         ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg shadow-blue-500/25'
                         : 'text-slate-400 hover:text-white'
@@ -96,13 +99,23 @@ function App() {
                   </button>
                   <button
                     onClick={() => setMode('trainer')}
-                    className={`px-5 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                    className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
                       mode === 'trainer'
                         ? 'bg-gradient-to-r from-emerald-600 to-emerald-500 text-white shadow-lg shadow-emerald-500/25'
                         : 'text-slate-400 hover:text-white'
                     }`}
                   >
-                    Practice
+                    Preflop
+                  </button>
+                  <button
+                    onClick={() => setMode('postflop')}
+                    className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                      mode === 'postflop'
+                        ? 'bg-gradient-to-r from-purple-600 to-purple-500 text-white shadow-lg shadow-purple-500/25'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    Postflop
                   </button>
                 </div>
               </div>
@@ -253,6 +266,10 @@ function App() {
                   />
                 )}
               </div>
+            )}
+
+            {mode === 'postflop' && (
+              <PostflopTrainer />
             )}
           </div>
         </main>
